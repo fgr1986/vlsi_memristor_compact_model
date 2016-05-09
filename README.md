@@ -1,11 +1,36 @@
-# README
 # RRAM/Memristor VLSI Compact Model
+## README
 
 version v1.0.0, 10/05/2016
 
 Author: Fernando García Redondo, Technical University of Madrid UPM
 
-Licence: LICENSE.txt
+GPL Licence: LICENSE.txt
+
+## Short Description
+Physical memristor/RRAM/resistive switching device SPICE compact model,
+that is able to accurately fit both unipolar/bipolar devices settling to its
+current-voltage relationship.
+
+Main capabilities:
+* Accurate modeling of dynamic resistance, mimicking physical device response.
+* Modeling switching behavior for bipolar/unipolar devices.
+* Cycle and switching event count.
+* Modular and extensible: Temperature aware case of study.
+* Variability aware: voltage/cycle dependent RTN, cycle to cycle conduction changes.
+* Provision of variability dynamics and resistive state
+retention handling, defining how the device degrades
+through time/cycle stress.
+* Explicit support for multi-level storage, allowing
+the modeling of Pristine State -the initial High
+Resistive State (HRS) prior any electroforming-.
+* Project page: http://vlsi.die.upm.es/memristor
+
+Both LT-Spice and Cadence Spectre compact models/test benches
+are provided.
+
+## Full Description
+See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds**, *Fernando García-Redondo, Robert P. Gowers, A. Crespo-Yepes,Marisa López-Vallejo and Liudi Jiang*, **IEEE Transactions on Circuits and Systems--I: Regular Papers**, 2016, DOI: 10.1109/TCSI.2016.2564703
 
 ## Proyect pages:
 * http://vlsi.die.upm.es/memristor_spice_model
@@ -21,7 +46,6 @@ Licence: LICENSE.txt
 * **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds**
   *Fernando García-Redondo, Robert P. Gowers, A. Crespo-Yepes,Marisa López-Vallejo and Liudi Jiang*
   **IEEE Transactions on Circuits and Systems--I: Regular Papers**
-  >
   > 2016, DOI: 10.1109/TCSI.2016.2564703
 
 ### Memristor Application Framework Publications
