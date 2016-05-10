@@ -36,7 +36,10 @@ Both LT-Spice and Cadence Spectre compact models/test benches
 are provided.
 
 ## Full Description
-See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds**, *Fernando García-Redondo, Robert P. Gowers, A. Crespo-Yepes,Marisa López-Vallejo and Liudi Jiang*, **IEEE Transactions on Circuits and Systems--I: Regular Papers**, 2016, DOI: 10.1109/TCSI.2016.2564703
+See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds**,
+*Fernando García-Redondo, Robert P. Gowers, A. Crespo-Yepes,Marisa López-Vallejo and Liudi Jiang*,
+**IEEE Transactions on Circuits and Systems--I: Regular Papers**,
+2016, DOI: 10.1109/TCSI.2016.2564703
 
 ## Proyect pages:
 * http://vlsi.die.upm.es/memristor_spice_model
