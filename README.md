@@ -46,9 +46,8 @@ See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by
 * http://vlsi.die.upm.es/memristor
 
 ## Author contact:
-[Fernando García Redondo](http://www.fernandeando.com)
-
-[fgarcia@die.upm.es](mailto:fgarcia@die.upm.es)
+* [Fernando García Redondo](http://www.fernandeando.com)
+* [fgarcia@die.upm.es](mailto:fgarcia@die.upm.es)
 
 ## Memristor Publications:
 ### Compact Model Publications
