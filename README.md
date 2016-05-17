@@ -1,7 +1,7 @@
 # VLSI Memristor/RRAM SPICE Compact Model
 ## README
 
-version v1.0.0, 17/05/2016
+version v1.1.0, 17/05/2016
 
 ## Author contact:
 * [Fernando García Redondo](http://www.fernandeando.com)
@@ -47,6 +47,8 @@ are provided.
 * Pristine (Pre-forming) state examples in **spectre/bipolar_aSiCCuTiN** folder
 * Temperature-dependency examples in **spectre/bipolar_aSiCCuTiN** folder
 * Standard (phenomenological) charge controlled examples in **spice/charge_controlled** folder
+
+![Variability example](http://vlsi.die.upm.es/Image?imageId=27&size=2)
 
 ## Full Description
 See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds**,
