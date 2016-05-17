@@ -1,0 +1,465 @@
+////////////////////////////////////////////////
+// VLSI bipolar_aSiCCuTiN  variability aux files for bipolar aSiC RRAM model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// How To and configuration
+
+simulator lang=spectre
+
+// mMean = 1;
+// mStd = 0.4;
+real cycle_dependent_ron_p( real cycle ) {
+	return
+	+ cycle < 1 ? 1.100 :
+  + cycle < 2 ? 0.894 :
+  + cycle < 3 ? 0.675 :
+  + cycle < 4 ? 1.053 :
+  + cycle < 5 ? 0.526 :
+  + cycle < 6 ? 1.136 :
+  + cycle < 7 ? 0.363 :
+  + cycle < 8 ? 0.018 :
+  + cycle < 9 ? 0.917 :
+  + cycle < 10 ? 0.607 :
+  + cycle < 11 ? 1.612 :
+  + cycle < 12 ? 1.549 :
+  + cycle < 13 ? 0.755 :
+  + cycle < 14 ? 0.613 :
+  + cycle < 15 ? 0.913 :
+  + cycle < 16 ? 0.874 :
+  + cycle < 17 ? 1.554 :
+  + cycle < 18 ? 0.861 :
+  + cycle < 19 ? 1.482 :
+  + cycle < 20 ? 1.495 :
+  + cycle < 21 ? 2.008 :
+  + cycle < 22 ? 0.848 :
+  + cycle < 23 ? 0.810 :
+  + cycle < 24 ? 1.670 :
+  + cycle < 25 ? 0.705 :
+  + cycle < 26 ? 0.274 :
+  + cycle < 27 ? 1.035 :
+  + cycle < 28 ? 1.200 :
+  + cycle < 29 ? 0.855 :
+  + cycle < 30 ? 0.860 :
+  + cycle < 31 ? 0.455 :
+  + cycle < 32 ? 1.689 :
+  + cycle < 33 ? 1.081 :
+  + cycle < 34 ? 0.781 :
+  + cycle < 35 ? 1.161 :
+  + cycle < 36 ? 1.334 :
+  + cycle < 37 ? 0.581 :
+  + cycle < 38 ? 1.090 :
+  + cycle < 39 ? 0.807 :
+  + cycle < 40 ? 1.660 :
+  + cycle < 41 ? 1.064 :
+  + cycle < 42 ? 0.550 :
+  + cycle < 43 ? 0.956 :
+  + cycle < 44 ? 1.180 :
+  + cycle < 45 ? 1.840 :
+  + cycle < 46 ? 1.016 :
+  + cycle < 47 ? 1.229 :
+  + cycle < 48 ? 1.480 :
+  + cycle < 49 ? 1.204 :
+  + cycle < 50 ? 0.652 :
+  + cycle < 51 ? 0.936 :
+  + cycle < 52 ? 0.737 :
+  + cycle < 53 ? 1.283 :
+  + cycle < 54 ? 1.616 :
+  + cycle < 55 ? 0.991 :
+  + cycle < 56 ? 1.422 :
+  + cycle < 57 ? 0.721 :
+  + cycle < 58 ? 1.064 :
+  + cycle < 59 ? 0.929 :
+  + cycle < 60 ? 1.652 :
+  + cycle < 61 ? 1.118 :
+  + cycle < 62 ? 1.307 :
+  + cycle < 63 ? 0.864 :
+  + cycle < 64 ? 0.747 :
+  + cycle < 65 ? 1.158 :
+  + cycle < 66 ? 0.673 :
+  + cycle < 67 ? 0.455 :
+  + cycle < 68 ? 0.879 :
+  + cycle < 69 ? 1.640 :
+  + cycle < 70 ? 0.843 :
+  + cycle < 71 ? 1.088 :
+  + cycle < 72 ? 0.763 :
+  + cycle < 73 ? 0.180 :
+  + cycle < 74 ? 1.000 :
+  + cycle < 75 ? 1.677 :
+  + cycle < 76 ? 0.867 :
+  + cycle < 77 ? 0.540 :
+  + cycle < 78 ? 0.604 :
+  + cycle < 79 ? 1.146 :
+  + cycle < 80 ? 0.832 :
+  + cycle < 81 ? 1.393 :
+  + cycle < 82 ? 0.890 :
+  + cycle < 83 ? 0.166 :
+  + cycle < 84 ? 0.824 :
+  + cycle < 85 ? 1.285 :
+  + cycle < 86 ? 1.411 :
+  + cycle < 87 ? 1.514 :
+  + cycle < 88 ? 1.400 :
+  + cycle < 89 ? 1.429 :
+  + cycle < 90 ? 1.758 :
+  + cycle < 91 ? 1.614 :
+  + cycle < 92 ? 1.070 :
+  + cycle < 93 ? 0.810 :
+  + cycle < 94 ? 0.888 :
+  + cycle < 95 ? 1.281 :
+  + cycle < 96 ? 1.483 :
+  + cycle < 97 ? 0.901 :
+  + cycle < 98 ? 1.605 :
+  + cycle < 99 ? 0.710 :
+  + cycle < 100 ? 0.814 : 1;
+}
+
+// mMean = 1;
+// mStd = 0.4;
+real cycle_dependent_ron_n( real cycle ) {
+	return
+	+ cycle < 1 ? 0.845 :
+  + cycle < 2 ? 0.735 :
+  + cycle < 3 ? 1.348 :
+  + cycle < 4 ? 0.925 :
+  + cycle < 5 ? 1.741 :
+  + cycle < 6 ? 0.998 :
+  + cycle < 7 ? 1.747 :
+  + cycle < 8 ? 0.028 :
+  + cycle < 9 ? 1.145 :
+  + cycle < 10 ? 1.113 :
+  + cycle < 11 ? 1.774 :
+  + cycle < 12 ? 1.105 :
+  + cycle < 13 ? 1.712 :
+  + cycle < 14 ? 1.757 :
+  + cycle < 15 ? 0.752 :
+  + cycle < 16 ? 0.524 :
+  + cycle < 17 ? 1.343 :
+  + cycle < 18 ? 0.674 :
+  + cycle < 19 ? 0.937 :
+  + cycle < 20 ? 0.772 :
+  + cycle < 21 ? 1.040 :
+  + cycle < 22 ? 1.239 :
+  + cycle < 23 ? 1.285 :
+  + cycle < 24 ? 1.054 :
+  + cycle < 25 ? 0.621 :
+  + cycle < 26 ? 0.661 :
+  + cycle < 27 ? 1.117 :
+  + cycle < 28 ? 0.126 :
+  + cycle < 29 ? 0.530 :
+  + cycle < 30 ? 0.374 :
+  + cycle < 31 ? 0.869 :
+  + cycle < 32 ? 1.194 :
+  + cycle < 33 ? 1.946 :
+  + cycle < 34 ? 0.998 :
+  + cycle < 35 ? 0.573 :
+  + cycle < 36 ? 0.819 :
+  + cycle < 37 ? 1.183 :
+  + cycle < 38 ? 1.409 :
+  + cycle < 39 ? 0.816 :
+  + cycle < 40 ? 0.998 :
+  + cycle < 41 ? 1.474 :
+  + cycle < 42 ? 1.089 :
+  + cycle < 43 ? 1.032 :
+  + cycle < 44 ? 0.868 :
+  + cycle < 45 ? 0.846 :
+  + cycle < 46 ? 1.423 :
+  + cycle < 47 ? 0.787 :
+  + cycle < 48 ? 0.981 :
+  + cycle < 49 ? 0.586 :
+  + cycle < 50 ? 1.241 :
+  + cycle < 51 ? 1.100 :
+  + cycle < 52 ? 1.177 :
+  + cycle < 53 ? 0.989 :
+  + cycle < 54 ? 0.703 :
+  + cycle < 55 ? 0.966 :
+  + cycle < 56 ? 0.486 :
+  + cycle < 57 ? 0.865 :
+  + cycle < 58 ? 1.923 :
+  + cycle < 59 ? 1.669 :
+  + cycle < 60 ? 1.347 :
+  + cycle < 61 ? 1.175 :
+  + cycle < 62 ? 1.331 :
+  + cycle < 63 ? 1.156 :
+  + cycle < 64 ? 1.373 :
+  + cycle < 65 ? 1.482 :
+  + cycle < 66 ? 0.591 :
+  + cycle < 67 ? 0.924 :
+  + cycle < 68 ? 0.989 :
+  + cycle < 69 ? 0.778 :
+  + cycle < 70 ? 0.602 :
+  + cycle < 71 ? 1.509 :
+  + cycle < 72 ? 1.267 :
+  + cycle < 73 ? 0.636 :
+  + cycle < 74 ? 0.579 :
+  + cycle < 75 ? 1.171 :
+  + cycle < 76 ? 0.724 :
+  + cycle < 77 ? 0.521 :
+  + cycle < 78 ? 0.901 :
+  + cycle < 79 ? 0.662 :
+  + cycle < 80 ? 1.340 :
+  + cycle < 81 ? 1.923 :
+  + cycle < 82 ? 0.320 :
+  + cycle < 83 ? 1.335 :
+  + cycle < 84 ? 1.169 :
+  + cycle < 85 ? 0.663 :
+  + cycle < 86 ? 1.385 :
+  + cycle < 87 ? 0.645 :
+  + cycle < 88 ? 0.247 :
+  + cycle < 89 ? 0.551 :
+  + cycle < 90 ? 1.231 :
+  + cycle < 91 ? 1.164 :
+  + cycle < 92 ? 1.401 :
+  + cycle < 93 ? 1.196 :
+  + cycle < 94 ? 1.504 :
+  + cycle < 95 ? 0.198 :
+  + cycle < 96 ? 0.878 :
+  + cycle < 97 ? 0.855 :
+  + cycle < 98 ? 0.977 :
+  + cycle < 99 ? 1.427 :
+  + cycle < 100 ? 0.729  : 1;
+}
+
+// random_scl function
+// mMean = 5;
+// mStd = 1;
+real cycle_dependent_scl_p( real cycle ) {
+	return
+	+ cycle < 1 ? 6.129 :
+  + cycle < 2 ? 5.248 :
+  + cycle < 3 ? 5.557 :
+  + cycle < 4 ? 5.643 :
+  + cycle < 5 ? 5.739 :
+  + cycle < 6 ? 3.677 :
+  + cycle < 7 ? 4.323 :
+  + cycle < 8 ? 4.647 :
+  + cycle < 9 ? 3.403 :
+  + cycle < 10 ? 3.598 :
+  + cycle < 11 ? 5.358 :
+  + cycle < 12 ? 5.359 :
+  + cycle < 13 ? 5.925 :
+  + cycle < 14 ? 5.366 :
+  + cycle < 15 ? 4.233 :
+  + cycle < 16 ? 4.984 :
+  + cycle < 17 ? 4.283 :
+  + cycle < 18 ? 5.867 :
+  + cycle < 19 ? 3.489 :
+  + cycle < 20 ? 5.859 :
+  + cycle < 21 ? 5.498 :
+  + cycle < 22 ? 5.773 :
+  + cycle < 23 ? 4.421 :
+  + cycle < 24 ? 5.197 :
+  + cycle < 25 ? 4.959 :
+  + cycle < 26 ? 3.489 :
+  + cycle < 27 ? 5.485 :
+  + cycle < 28 ? 5.443 :
+  + cycle < 29 ? 4.257 :
+  + cycle < 30 ? 6.240 :
+  + cycle < 31 ? 3.235 :
+  + cycle < 32 ? 4.589 :
+  + cycle < 33 ? 4.609 :
+  + cycle < 34 ? 4.286 :
+  + cycle < 35 ? 4.336 :
+  + cycle < 36 ? 5.483 :
+  + cycle < 37 ? 4.126 :
+  + cycle < 38 ? 5.069 :
+  + cycle < 39 ? 4.575 :
+  + cycle < 40 ? 4.872 :
+  + cycle < 41 ? 6.932 :
+  + cycle < 42 ? 4.458 :
+  + cycle < 43 ? 5.886 :
+  + cycle < 44 ? 5.038 :
+  + cycle < 45 ? 5.031 :
+  + cycle < 46 ? 3.097 :
+  + cycle < 47 ? 6.021 :
+  + cycle < 48 ? 5.155 :
+  + cycle < 49 ? 4.566 :
+  + cycle < 50 ? 5.037 :
+  + cycle < 51 ? 4.891 :
+  + cycle < 52 ? 6.832 :
+  + cycle < 53 ? 3.893 :
+  + cycle < 54 ? 4.438 :
+  + cycle < 55 ? 5.263 :
+  + cycle < 56 ? 6.854 :
+  + cycle < 57 ? 5.257 :
+  + cycle < 58 ? 6.111 :
+  + cycle < 59 ? 5.753 :
+  + cycle < 60 ? 5.719 :
+  + cycle < 61 ? 6.288 :
+  + cycle < 62 ? 7.291 :
+  + cycle < 63 ? 5.148 :
+  + cycle < 64 ? 4.710 :
+  + cycle < 65 ? 5.187 :
+  + cycle < 66 ? 4.697 :
+  + cycle < 67 ? 2.689 :
+  + cycle < 68 ? 4.884 :
+  + cycle < 69 ? 5.168 :
+  + cycle < 70 ? 4.634 :
+  + cycle < 71 ? 4.783 :
+  + cycle < 72 ? 6.236 :
+  + cycle < 73 ? 5.083 :
+  + cycle < 74 ? 4.970 :
+  + cycle < 75 ? 4.339 :
+  + cycle < 76 ? 4.443 :
+  + cycle < 77 ? 4.899 :
+  + cycle < 78 ? 5.128 :
+  + cycle < 79 ? 5.389 :
+  + cycle < 80 ? 6.635 :
+  + cycle < 81 ? 6.357 :
+  + cycle < 82 ? 3.803 :
+  + cycle < 83 ? 6.757 :
+  + cycle < 84 ? 4.015 :
+  + cycle < 85 ? 7.571 :
+  + cycle < 86 ? 5.199 :
+  + cycle < 87 ? 4.561 :
+  + cycle < 88 ? 2.979 :
+  + cycle < 89 ? 4.602 :
+  + cycle < 90 ? 6.542 :
+  + cycle < 91 ? 4.587 :
+  + cycle < 92 ? 4.549 :
+  + cycle < 93 ? 3.687 :
+  + cycle < 94 ? 3.826 :
+  + cycle < 95 ? 4.421 :
+  + cycle < 96 ? 5.360 :
+  + cycle < 97 ? 2.938 :
+  + cycle < 98 ? 5.667 :
+  + cycle < 99 ? 4.519 :
+  + cycle < 100 ? 5.804 : 5;
+}
+
+// random_scl function
+// mMean 7
+// mStd 1.2
+real cycle_dependent_scl_n( real cycle ) {
+	return
+	+ cycle < 1 ? 7.884 :
+  + cycle < 2 ? 7.536 :
+  + cycle < 3 ? 5.468 :
+  + cycle < 4 ? 7.644 :
+  + cycle < 5 ? 7.563 :
+  + cycle < 6 ? 5.579 :
+  + cycle < 7 ? 6.914 :
+  + cycle < 8 ? 8.923 :
+  + cycle < 9 ? 6.408 :
+  + cycle < 10 ? 5.383 :
+  + cycle < 11 ? 7.191 :
+  + cycle < 12 ? 6.328 :
+  + cycle < 13 ? 6.570 :
+  + cycle < 14 ? 7.492 :
+  + cycle < 15 ? 6.934 :
+  + cycle < 16 ? 6.542 :
+  + cycle < 17 ? 5.762 :
+  + cycle < 18 ? 6.016 :
+  + cycle < 19 ? 5.772 :
+  + cycle < 20 ? 6.274 :
+  + cycle < 21 ? 9.113 :
+  + cycle < 22 ? 7.177 :
+  + cycle < 23 ? 6.341 :
+  + cycle < 24 ? 6.847 :
+  + cycle < 25 ? 7.294 :
+  + cycle < 26 ? 7.331 :
+  + cycle < 27 ? 7.382 :
+  + cycle < 28 ? 8.309 :
+  + cycle < 29 ? 6.587 :
+  + cycle < 30 ? 7.426 :
+  + cycle < 31 ? 6.258 :
+  + cycle < 32 ? 4.769 :
+  + cycle < 33 ? 6.314 :
+  + cycle < 34 ? 8.702 :
+  + cycle < 35 ? 6.574 :
+  + cycle < 36 ? 8.226 :
+  + cycle < 37 ? 7.722 :
+  + cycle < 38 ? 6.283 :
+  + cycle < 39 ? 9.296 :
+  + cycle < 40 ? 8.048 :
+  + cycle < 41 ? 8.083 :
+  + cycle < 42 ? 5.908 :
+  + cycle < 43 ? 6.224 :
+  + cycle < 44 ? 7.776 :
+  + cycle < 45 ? 8.440 :
+  + cycle < 46 ? 6.968 :
+  + cycle < 47 ? 9.054 :
+  + cycle < 48 ? 6.847 :
+  + cycle < 49 ? 7.862 :
+  + cycle < 50 ? 7.004 :
+  + cycle < 51 ? 8.313 :
+  + cycle < 52 ? 6.608 :
+  + cycle < 53 ? 6.962 :
+  + cycle < 54 ? 5.190 :
+  + cycle < 55 ? 7.363 :
+  + cycle < 56 ? 7.108 :
+  + cycle < 57 ? 7.634 :
+  + cycle < 58 ? 7.406 :
+  + cycle < 59 ? 6.197 :
+  + cycle < 60 ? 7.797 :
+  + cycle < 61 ? 10.132 :
+  + cycle < 62 ? 6.230 :
+  + cycle < 63 ? 8.119 :
+  + cycle < 64 ? 6.307 :
+  + cycle < 65 ? 5.910 :
+  + cycle < 66 ? 5.653 :
+  + cycle < 67 ? 7.690 :
+  + cycle < 68 ? 7.040 :
+  + cycle < 69 ? 8.048 :
+  + cycle < 70 ? 6.772 :
+  + cycle < 71 ? 5.590 :
+  + cycle < 72 ? 6.762 :
+  + cycle < 73 ? 6.911 :
+  + cycle < 74 ? 7.735 :
+  + cycle < 75 ? 5.547 :
+  + cycle < 76 ? 4.788 :
+  + cycle < 77 ? 7.551 :
+  + cycle < 78 ? 6.068 :
+  + cycle < 79 ? 6.411 :
+  + cycle < 80 ? 7.660 :
+  + cycle < 81 ? 7.022 :
+  + cycle < 82 ? 7.198 :
+  + cycle < 83 ? 8.421 :
+  + cycle < 84 ? 8.279 :
+  + cycle < 85 ? 7.004 :
+  + cycle < 86 ? 6.362 :
+  + cycle < 87 ? 5.567 :
+  + cycle < 88 ? 7.379 :
+  + cycle < 89 ? 9.776 :
+  + cycle < 90 ? 8.256 :
+  + cycle < 91 ? 7.270 :
+  + cycle < 92 ? 5.683 :
+  + cycle < 93 ? 5.529 :
+  + cycle < 94 ? 6.364 :
+  + cycle < 95 ? 2.509 :
+  + cycle < 96 ? 7.501 :
+  + cycle < 97 ? 8.492 :
+  + cycle < 98 ? 7.133 :
+  + cycle < 99 ? 6.607 :
+  + cycle < 100 ? 8.623 : 7;
+}
+
+real fer( real update, real voltage, real defaultVal ){
+	return update==1 ? voltage : defaultVal;
+}

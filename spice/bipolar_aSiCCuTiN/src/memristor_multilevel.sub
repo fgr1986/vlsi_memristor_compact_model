@@ -1,0 +1,100 @@
+************************************************
+** VLSI Multilevel bipolar_aSiCCuTiN model
+************************************************
+
+************************************************
+** v1.1, 17/05/2016
+************************************************
+** Author: Fernando García-Redondo
+** fgarcia@die.upm.es, fernandeando.com
+** Technical University of Madrid
+**
+** https:**github.com/fgr1986/vlsi_memristor_compact_model
+** http:**vlsi.die.upm.es/memristor_spice_model
+************************************************
+
+************************************************
+** License:
+** Copyright of the model is maintained by the developers,
+** and the model is distributed under a Dual-Licence mode.
+** 1) GPL License apply for academic purposes.
+** If you use this model in your work, you are requested to cite [1] in the reference.
+** GitHub Repository and Downloads
+** 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+** Full License: LICENSE.txt
+**
+** [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+** Fernando García-Redondo et. al.
+** IEEE Transactions on Circuits and Systems--I: Regular Papers
+** 2016, DOI: 10.1109/TCSI.2016.2564703
+************************************************
+
+************************************************
+** How to
+** 1) Select the corresponding model
+** 2) Select the input depending on the desired model
+** 3) Run with LTSpice (see test_bench additional files)
+************************************************
+
+** simulator lang=spice
+
+.SUBCKT memristor Plus Minus PARAMS:
+	+pi=3.1415926 Kb=1.38e-23 q=1.6e-19 eps0=8.85e-12
+	+area=6.4e-9 d=4e-8 scl1=5  scl2=7 scl3=9 AA1=1e6 AA2=2e6 AA3 =5e7 Ub=0.9
+	+epsr=8
+	+Ron=300 T0=300 ktemp=1 cI=1e-4 ronp=6.1k ronn=8.5k epsi=epsr*eps0
+	** energy threshold parameters
+	** multilevel example parameters
+	+p_th_1_2=0.5e-13 p_th_2_3=p_th_1_2+1e-8 p_th_3_4=p_th_2_3+0.5e-5
+	+p_th_4_3=-1e-7 p_th_3_2=p_th_4_3-1e-8 p_th_2_1=p_th_3_2-1e-9
+	** internal voltages
+	+v_s1=0e-7 v_s2=1e-7 v_s3=2e-7 v_s4=3e-7
+	**********************
+	** Energy computation
+	**********************
+	* total energy
+	Etpospower tpp 0 value={idt( IF( V(Plus, Minus)>0 & v(pp)<p_th_3_4, I(Gcond)*V(Plus,Minus), 0) ,0 )}
+	Etnegpower tnp 0 value={idt( IF( V(Plus, Minus)<0 & v(np)>p_th_2_1, abs(I(Gcond))*V(Plus,Minus), 0),0 )}
+	* relative energy
+	Epospower pp 0 value={idt( IF( V(Plus, Minus)>0, I(Gcond)*V(Plus,Minus), 0) ,0, v(trig_p)>0)}
+	Enegpower np 0 value={idt( IF( V(Plus, Minus)<0, abs(I(Gcond))*V(Plus,Minus), 0),0, v(trig_n)>0)}
+	E_trigger_p trig_p 0 value={IF( v(s)==v_s1 & v(pp)>=p_th_3_4, 1e-7, 0)}
+	E_trigger_n trig_n 0 value={IF( v(s)==v_s4 & v(np)<=p_th_2_1, 1e-7, 0)}
+	**********************
+	** state computation
+	**********************
+	Estate s 0 value={ get_state(V(Plus, Minus), V(pp), V(np), p_th_1_2, p_th_2_3,  p_th_3_4, p_th_4_3, p_th_3_2, p_th_2_1, v_s1, v_s2, v_s3, v_s4) }
+	Rstate s 0 r=100k
+	************************
+	** Conduction processes
+	************************
+	Eon  on 0 value={V(Plus, Minus)}
+	Ron  on 0 r=ron
+	Goff1 0 off1 value={ sgn(V(Plus, Minus))*area*AA1*ktemp*(T0**2)*exp(-q*Ub/(Kb * T0))*exp( sqrt(abs(V(Plus, Minus)))*(scl1 + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * epsi)))) ) }
+	Goff2 0 off2 value={ sgn(V(Plus, Minus))*area*AA2*ktemp*(T0**2)*exp(-q*Ub/(Kb * T0))*exp( sqrt(abs(V(Plus, Minus)))*(scl2 + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * epsi)))) ) }
+	Goff3 0 off3 value={ sgn(V(Plus, Minus))*area*AA3*ktemp*(T0**2)*exp(-q*Ub/(Kb * T0))*exp( sqrt(abs(V(Plus, Minus)))*(scl3 + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * epsi)))) ) }
+	Raux1 off1 0 r=1k
+	Raux2 off2 0 r=1k
+	Raux3 off3 0 r=1k
+	Gcond Plus Minus value={ max( -cI, min(cI, IF(V(s)==v_s1, i(Goff1), IF(V(s)==v_s2, i(Goff2), IF(V(s)==v_s3, i(Goff3), i(Ron) ) ) ) )) }
+	************************
+	**  event counters
+	************************
+	E_p_events p_events 0 value={floor( V(tpp)/p_th_3_4 )}
+	E_n_events n_events 0 value={floor( V(tnp)/p_th_2_1 )}
+	*******************
+	** state function
+	*******************
+	.func get_state(v, pp, pn, th_1_2, th_2_3,  th_3_4,  th_4_3, th_3_2, th_2_1, v_s1, v_s2, v_s3, v_s4) {
+	+	IF(v>=0,
+	+		IF(pp>=th_3_4, v_s4,
+	+		IF(pp>=th_2_3, v_s3,
+	+		IF(pp>=th_1_2, v_s2,
+	+		v_s1) ) ),
+
+	+		IF(pn>=th_4_3, v_s4,
+	+		IF(pn>=th_3_2, v_s3,
+	+		IF(pn>=th_2_1, v_s2,
+	+		v_s1)) ) ) 	}
+	** .func get_state(v, pp, pn, th_1_2, th_2_3,  th_3_4,  th_4_3, th_3_2, th_2_1, v_s1, v_s2, v_s3, v_s4) { v_s1 }
+.ENDS memristor

@@ -1,0 +1,68 @@
+////////////////////////////////////////////////
+// Circuit for VLSI unipolar_NiHfO2Si RRAM model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// How to
+// 1) Select the corresponding model
+// 2) Select the input depending on the existence
+// 		of pristine state
+// 3) Run with 'spectre +error +warn scheme.scs'
+////////////////////////////////////////////////
+
+simulator lang=spectre
+global 0
+parameters
++ derivV=0.5
++ amplSet=2.56 tSet=2.56/derivV tSet2=tSet+1e-12
++ amplReset=1.9 tReset=(tSet+amplReset/derivV) tReset2=tReset+1e-12
++ max_step=5e-4 t_stop=10
+include "memristor.scs"
+
+// v0 (mPlus 0)  vsource ampl=amplV type=sine freq=freqV
+// triangle
+// v0   (mPlus 0) vsource type=pwl pwlperiod=1 wave=[ 0 0 0.25 amplV 0.5 0 0.75 -amplV 1 0 ]
+// sierra
+v0   (mPlus 0) vsource type=pwl pwlperiod=1 wave=[ 0 0 tSet amplSet tSet2 0 tReset amplReset tReset2 0 ]
+
+mem0 (mPlus 0) memristor
+
+simulatorOptions options temp=27 \
+    tnom=27 scalem=1.0 scale=1.0 gmin=1e-12 rforce=1 maxnotes=5 maxwarns=5 \
+    digits=5 cols=80 pivrel=1e-3 sensfile="../psf/sens.output" \
+    checklimitdest=psf
+//  + reltol=1e-3 vabstol=1e-6 iabstol=1e-12
+    + iabstol=1e-2
+
+tran tran stop=t_stop write="spectre.ic" writefinal="spectre.fc" \
+    annotate=status maxiters=5
+    + maxstep=max_step
+
+saveOptions options save=all

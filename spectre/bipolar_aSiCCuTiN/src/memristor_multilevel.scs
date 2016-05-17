@@ -1,0 +1,129 @@
+////////////////////////////////////////////////
+// VLSI bipolar_aSiCCuTiN memristor multilevel aSiC model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+simulator lang=spectre
+
+real get_state ( real v, real pp, real pn, real th_1_2, real th_2_3,  real th_3_4,  real th_4_3, real th_3_2, real th_2_1, real v_s1, real v_s2, real v_s3, real v_s4 ) {
+
+	return v>=0 ? (
+		   + pp>=th_3_4 ? v_s4 :
+	 	   + pp>=th_2_3 ? v_s3 :
+		   + pp>=th_1_2 ? v_s2 :
+		   + v_s1 ) :
+		   + (
+		   + pn>=th_4_3 ? v_s4 :
+		   + pn>=th_3_2 ? v_s3 :
+		   + pn>=th_2_1 ? v_s2 :
+		   + v_s1 );
+}
+
+///////////////////////
+// RRAM subcircuit
+///////////////////////
+subckt memristor (Plus Minus)
+
+	///////////////////////
+	// parameters
+	///////////////////////
+	parameters
+	// constants
+	// [a.u.]	   [J/K]	   [C]			 [F/m]
+	+ pi=3.1415926  Kb=1.38e-23 q=1.6e-19  eps_0=8.85e-12;
+	// conductance parameters
+	// [m^2]	  [m]	[1/V]	 [1/V]	[A/(m^2 K^2)] [eV]
+	+ area=6.4e-9 d=4e-8 scl1=5  scl2=7 scl3=9 AA1=1e6 AA2=2e6 AA3 =5e7 Ub=0.9
+	// [a.u.] [K]
+	+ eps_r=8 T0=300 k_temp=1
+	// [A]  [ohms]
+	+ cI=1e-4 r_on=6.1k
+	// [F/m]
+	+ eps_i=eps_r*eps_0
+
+	// energy threshold parameters
+	+ p_th_1_2=1e-12 p_th_2_3=p_th_1_2+1e-6 p_th_3_4=p_th_2_3+0.5e-5
+	+ p_th_4_3=-1e-8 p_th_3_2=p_th_4_3-1e-8 p_th_2_1=p_th_3_2-1e-7
+
+	// internal voltages
+	+ v_s1=0e-7 v_s2=1e-7 v_s3=2e-7 v_s4=3e-7
+
+
+	////////////////////////////
+	// cycles/events computation
+	////////////////////////////
+	ic p_events=0
+	ic n_events=0
+	E_p_events ( p_events 0 ) bsource v=floor( v(p_sum_pow)/p_th_3_4 )
+	E_n_events ( n_events 0 ) bsource v=floor( abs(v(n_sum_pow)/p_th_2_1) )
+
+	////////////////////////////
+	// total energy computation
+	////////////////////////////
+	ic p_sum_pow=0
+	ic n_sum_pow=0
+
+	// after complete set/reset does not compute energy contributions
+	E_pos_power ( p_sum_pow 0 ) bsource v= idt( v(Plus, Minus)>0 && v(p_sum_pow)<(v(n_events)+1)*p_th_3_4 ? v(Plus, Minus)*abs(i(G_cond)) : 0, 0 )
+	E_neg_power ( n_sum_pow 0 ) bsource v= idt( v(Plus, Minus)<0 && v(n_sum_pow)>(v(p_events)+1)*p_th_2_1 ? v(Plus, Minus)*abs(i(G_cond)) : 0, 0 )
+
+
+	///////////////////////////////
+	// relative energy computation
+	///////////////////////////////
+	ic rel_p_pow=p_th_3_4
+	ic rel_n_pow=p_th_2_1
+
+	E_rel_p_pow   ( rel_p_pow 0 ) bsource v=v(p_sum_pow) - v(n_events)*p_th_3_4
+	E_rel_n_pow   ( rel_n_pow 0 ) bsource v=v(n_sum_pow) - max(0,v(p_events)-1)*p_th_2_1
+
+	//////////////////////////////////////////////////////
+	// state computation
+	//////////////////////////////////////////////////////
+	ic state=v_s1
+	E_state ( state 0 ) bsource  v= get_state(v(Plus, Minus), v(rel_p_pow), v(rel_n_pow), p_th_1_2, p_th_2_3,  p_th_3_4, p_th_4_3, p_th_3_2, p_th_2_1, v_s1, v_s2, v_s3, v_s4)
+	R_state (state 0) resistor r=1k
+
+	////////////////////////////
+	// conduction computation
+	////////////////////////////
+
+	// on state, ohmic like
+	E_4 ( s4 0 ) bsource v=v(Plus, Minus)
+	R4  ( s4 0 ) bsource r=r_on
+
+	// off modeling, simetric schottky conduction processes
+	G_1 ( 0 s1 ) bsource i=  sgn(v(Plus, Minus))*area*AA1*k_temp*(T0**2)*exp(-q * Ub / (Kb * T0) ) * exp( sqrt(abs(v(Plus, Minus)) ) * (scl1 + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * eps_i)))) )
+	G_2 ( 0 s2 ) bsource i=  sgn(v(Plus, Minus))*area*AA2*k_temp*(T0**2)*exp(-q * Ub / (Kb * T0) ) * exp( sqrt(abs(v(Plus, Minus)) ) * (scl2 + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * eps_i)))) )
+	G_3 ( 0 s3 ) bsource i=  sgn(v(Plus, Minus))*area*AA3*k_temp*(T0**2)*exp(-q * Ub / (Kb * T0) ) * exp( sqrt(abs(v(Plus, Minus)) ) * (scl3 + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * eps_i)))) )
+
+	// current selector
+	G_cond ( Plus Minus ) bsource i=max( -cI, min(cI, v(state)==v_s1 ? i(G_1) : v(state)==v_s2 ? i(G_2) : v(state)==v_s3 ? i(G_3) : i(R4) ) )
+
+ends memristor

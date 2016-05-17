@@ -1,0 +1,69 @@
+************************************************
+** VLSI bipolar_aSiCCuTiN model
+************************************************
+
+************************************************
+** v1.1, 17/05/2016
+************************************************
+** Author: Fernando García-Redondo
+** fgarcia@die.upm.es, fernandeando.com
+** Technical University of Madrid
+**
+** https:**github.com/fgr1986/vlsi_memristor_compact_model
+** http:**vlsi.die.upm.es/memristor_spice_model
+************************************************
+
+************************************************
+** License:
+** Copyright of the model is maintained by the developers,
+** and the model is distributed under a Dual-Licence mode.
+** 1) GPL License apply for academic purposes.
+** If you use this model in your work, you are requested to cite [1] in the reference.
+** GitHub Repository and Downloads
+** 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+** Full License: LICENSE.txt
+**
+** [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+** Fernando García-Redondo et. al.
+** IEEE Transactions on Circuits and Systems--I: Regular Papers
+** 2016, DOI: 10.1109/TCSI.2016.2564703
+************************************************
+
+************************************************
+** How to
+** 1) Select the corresponding model
+** 2) Select the input depending on the desired model
+** 3) Run with LTSpice (see test_bench additional files)
+************************************************
+
+.SUBCKT memristor Plus Minus PARAMS:
+	+pi=3.1415926 Kb=1.38e-23 q=1.6e-19
+	+eps0=8.85e-12 area=6.4e-9 d=4e-8 sclp=5 scln=7 AAp=2.4e6 AAn=1e6 Ub=0.9 epsr=8
+	+Ron=300 T0=300 ktemp=1 cI=1e-4 ronp=6.1k ronn=8.5k epsi=epsr*eps0
+	+pthset=3e-12 pthreset=-0.8e-8
+	+voff=0 von=1e-7
+
+	**IF(V(Plus, Minus)>0,V(Plus, Minus)*abs(I(Gcond)),0))
+	Eposinstpower p1 0 value={IF(V(Plus,Minus)>0,I(Gcond)*V(Plus,Minus),0)}
+	Eneginstpower p2 0 value={IF(V(Plus,Minus)<0,I(Gcond)*V(Plus,Minus),0)}
+	Epospower pp 0 value={idt(V(p1),0)}
+	Enegpower np 0 value={idt(V(p2),0)}
+	Esetth    st 0 value={(floor( V(np)/pthreset ) + 1 )*pthset}
+	Eresetth  rt 0 value={floor( V(pp)/pthset )*pthreset}
+	Estate    s  0 value={ IF(V(s)==voff, IF(V(pp)>V(st), von, voff ), IF( V(np)<V(rt), voff, von ) )}
+
+	Eon   on 0 value={V(Plus, Minus)}
+	Ronp  on 0 r=ronp
+	Ronn  on 0 r=ronn
+
+	Goffp 0 offp value={ area*AAp*ktemp*(T0**2)*exp(-q*Ub/(Kb * T0))*exp( sqrt(abs(V(Plus, Minus)))*(sclp + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * epsi)))) ) }
+	Goffn 0 offn value={-area*AAn*ktemp*(T0**2)*exp(-q*Ub/(Kb * T0))*exp( sqrt(abs(V(Plus, Minus)))*(scln + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * epsi)))) ) }
+	Raux1 offp 0 r=1k
+	Raux2 offn 0 r=1k
+
+	Gcond Plus Minus value={ max( -cI, min(cI, IF(V(s)==voff, IF( V(Plus, Minus)>0, I(Goffp), I(Goffn) ), IF( V(Plus, Minus)>0, I(Ronp), I(Ronn) ) ) ) ) }
+
+	Ecycle  cycle  0 value={floor( V(nsumpow)/pthreset )}
+	EsEvent sEvent 0 value={floor( V(nsumpow)/pthreset ) + floor( V(psumpow)/pthset ) }
+
+.ENDS memristor

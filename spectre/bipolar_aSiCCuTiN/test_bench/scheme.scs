@@ -1,0 +1,113 @@
+////////////////////////////////////////////////
+// Circuit for bipolar VLSI bipolar_aSiCCuTiN RRAM model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// How to
+// 1) Select the corresponding model among:
+//		*  Nominal no pristine state
+//					include "memristor_nominal.scs"
+//		*  Nominal, local temperature effects
+//					include "memristor_nominal_temperature.scs"
+//		*  Nominal pristine state
+//					include "memristor_nominal_pristine.scs"
+//		*  2b Multilevel example
+//					include "memristor_multilevel.scs"
+//		*  For rtn variability model, no pristine state
+//					include "memristor_rtn.scs"
+//		*  For rtn variability model, including pristine state
+//					include "memristor_rtn_pristine.scs"
+//		*  For full variability model
+//					include "memristor_full_variability.scs"
+//
+// 2) Select the input depending on the existence
+// 		of pristine state
+// 3) Run with 'spectre +error +warn scheme.scs'
+////////////////////////////////////////////////
+
+simulator lang=spectre
+global 0 vss!
+// + vdd! vss!
+
+// Parameters
+parameters
+
+// temperature
++ mT0=300
++ mT0Celsius=(mT0-273.15)
+
+// vdd
++ my_vdd=2.5
+
++ amplV1=1 amplV2=-1 freqV=1
++ amplPristine=2
+
+// simulation
+// + sim_time=100
++ sim_time=10
++ sim_max_step=10e-4
+
+// 1) Model Library
+include "memristor_nominal.scs"
+// include "memristor_nominal_temperature.scs"
+// include "memristor_nominal_pristine.scs"
+// include "memristor_multilevel.scs"
+// include "memristor_rtn.scs"
+// include "memristor_rtn_pristine.scs"
+// include "memristor_full_variability.scs"
+
+// Sources
+vss ( vss! 0 ) vsource type=dc dc=0
+
+// 2) Inputs
+// Pristine modeling
+// v0  				(mPlus aux) vsource type=pwl delay=1 pwlperiod=1 wave=[ 0 0 0.25 amplV1 0.5 0 0.75 amplV2 1 0 ]
+// v_pristine  (aux vss!) vsource type=pwl wave=[ 0 0 0.25 amplPristine 0.5 0 0.75 amplV2 1 0 ]
+
+// No pristine modeling
+v0 (mPlus vss!) vsource type=pwl pwlperiod=1 wave=[ 0 0 0.25 amplV1 0.5 0 0.75 amplV2 1 0 ]
+
+// Memristor
+mem0 (mPlus vss!) memristor
+
+// simulation options
+simulatorOptions options genmcdep=yes reltol=1e-3 vabstol=1e-6
+	+ temp=mT0Celsius tnom=27 scale=1.0 gmin=1e-12 rforce=1 maxnotes=5
+	+ maxwarns=5 digits=5 cols=80 pivrel=1e-3
+	+ iabstol=1e-2
+
+tran tran stop=sim_time write="spectre.ic" writefinal="spectre.fc" annotate=status maxiters=5
+	+ maxstep=sim_max_step
+	// noise for random gen
+	+ noiseseed=1 noisescale=sim_max_step
+	+ noisefmax=1/sim_max_step
+
+saveOptions options save=allpub saveahdlvars=all
+save v0:n

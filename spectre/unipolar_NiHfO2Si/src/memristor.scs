@@ -1,0 +1,104 @@
+////////////////////////////////////////////////
+// VLSI unipolar_NiHfO2Si RRAM model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+simulator lang=spectre
+// global 0
+include "idealDiode.scs"
+
+
+//normalize function
+real normalize(real a, real p) {
+	return min(1, max( 0, sgn(a)*pow(a, p) ));
+}
+
+subckt memristor (Plus Minus)
+
+  // parameters
+  parameters
+    // [A]
+    + cI=1e-2
+    // conduction parameters:
+		// PF
+    // + r_off=1 a_off=1.4e-8 b_off=1.6
+		// resistance and diode
+		+ r_off=3.3e6 d_is_off=5e-9 d_n_off=0.29
+    + r_on=8e2 d_is_on=18e-6 d_n_on=0.38
+
+    // energy threshold parameters
+    + p_th_set=1.35e-6 p_th_reset=1e-3 p_cicle_th=p_th_set+p_th_reset
+    + p=4
+    // internal params
+    + v_off=0 v_on=1e-7
+
+  // following voltage source
+  E_copy  ( v_copy  0) bsource v=v(Plus, Minus)
+
+  // power computation
+  E_total_power ( sum_pow 0) bsource v= idt( v(Plus, Minus)*i(G_cond) , 0)
+
+  // Threshold Monitors
+  // Variability can be included here
+  E_set_th   ( set_th   0 ) bsource v= floor( v(sum_pow)/p_cicle_th )*p_cicle_th + p_th_set
+  E_reset_th ( reset_th 0 ) bsource v= ceil( v(sum_pow)/p_cicle_th )*p_cicle_th
+
+  // E_state=0 -> off state; E_state=1 -> on  state
+  ic state=v_on
+  E_state ( state 0 ) bsource  v= v(state)<v_on ? ( v(sum_pow)>=floor( v(sum_pow)/p_cicle_th )*p_cicle_th + p_th_set ? v_on : v_off ) : ( v(sum_pow)>=v(reset_th)  ? v_off : v_on )
+  R_state ( state 0 ) resistor r=1k
+
+  // cycle count
+  ic cycle=0;
+  ic sEvent=0;
+  E_cycle  ( cycle  0 ) bsource v=floor( v(sum_pow)/p_cicle_th )
+  E_sEvent ( sEvent 0 ) bsource v=2*v(cycle) + 1*( (v(sum_pow)-v(cycle)*p_cicle_th )>p_th_set )
+
+	// diode ( p n ) // p->
+  // on modeling
+  d_off  ( v_copy  aux_off ) idealDiode  m_is=d_is_off m_n=d_n_off
+  Roff   ( aux_off  0       ) resistor r=r_off
+	// G_off ( aux_off 0 ) bsource i=a_off*v(Plus, Minus)*exp(b_off*abs(v(Plus, Minus)))
+
+  // off modeling
+  d_on   ( v_copy  aux_on  ) idealDiode  m_is=d_is_on m_n=d_n_on
+  Ron    ( aux_on  0       ) resistor r=r_on
+  // conduction
+
+  // soft switch
+  // E_cond ( b 0 ) bsource v= v(state)==v_off ? normalize( v(sum_pow)/v(set_th), p ) : 1 - normalize( v(sum_pow)/v(reset_th), p )
+  // with complain
+  // G_cond ( Plus Minus ) bsource i=max( -cI, min(cI, (1-v(b))*i(Roff) + v(b)*i(Ron) ))
+  // G_cond ( Plus Minus ) bsource i= (1-v(b))*i(Roff) + v(b)*i(Ron)
+  // hard switch with complain current
+  G_cond ( Plus Minus ) bsource i=max( -cI, min(cI, v(state)==v_off ? i(Roff) : i(Ron) ))
+  // hard switching without complain current
+  // G_cond ( Plus Minus ) bsource i= v(state)==v_off ? i(Roff) : i(Ron)
+
+ends memristor

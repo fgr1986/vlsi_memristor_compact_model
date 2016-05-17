@@ -1,0 +1,109 @@
+************************************************
+** VLSI bipolar_charge_controlled model
+************************************************
+
+************************************************
+** v1.1, 17/05/2016
+************************************************
+** Author: Fernando García-Redondo
+** fgarcia@die.upm.es, fernandeando.com
+** Technical University of Madrid
+**
+** https:**github.com/fgr1986/vlsi_memristor_compact_model
+** http:**vlsi.die.upm.es/memristor_spice_model
+************************************************
+
+************************************************
+** License:
+** Copyright of the model is maintained by the developers,
+** and the model is distributed under a Dual-Licence mode.
+** 1) GPL License apply for academic purposes.
+** If you use this model in your work, you are requested to cite [1] in the reference.
+** GitHub Repository and Downloads
+** 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+** Full License: LICENSE.txt
+**
+** [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+** Fernando García-Redondo et. al.
+** IEEE Transactions on Circuits and Systems--I: Regular Papers
+** 2016, DOI: 10.1109/TCSI.2016.2564703
+************************************************
+
+************************************************
+** How to
+** 1) Select the corresponding model
+** 2) Select the input depending on the desired model
+** 3) Run with LTSpice (see test_bench additional files)
+************************************************
+
+** simulator lang=spice
+
+.SUBCKT memristor Plus Minus PARAMS:
+	** Ron and Roff parameters
+	+Ron=1k
+  +Roff=100k
+	** scale to avoid overflows
+  + chargeScaling=1e-3
+
+	** charge threshold parameters
+	** multilevel example parameters
+	+p_th_1_2=chargeScaling*1e-6
+  +p_th_2_1=-chargeScaling*1e-5
+
+	** internal voltages
+	+v_s1=0e-7 v_s2=1e-7
+
+	**********************
+	** charge computation
+	**********************
+	* total charge (cycle count)
+	Etposcharge tpp 0 value={idt( IF( V(Plus, Minus)>0 & v(pp)<p_th_1_2, chargeScaling*I(Gcond), 0) ,0 )}
+	Etnegcharge tnp 0 value={idt( IF( V(Plus, Minus)<0 & v(np)>p_th_2_1, chargeScaling*I(Gcond), 0),0 )}
+	* relative charge (state computing)
+	Eposcharge pp 0 value={idt( IF( V(Plus, Minus)>0, chargeScaling*I(Gcond), 0) ,0, v(trig_p)>0)}
+	Enegcharge np 0 value={idt( IF( V(Plus, Minus)<0, chargeScaling*I(Gcond), 0),0, v(trig_n)>0)}
+	* clear relative charge
+	E_trigger_p trig_p 0 value={IF( v(s)==v_s1 & v(pp)>=p_th_1_2, 1e-7, 0)}
+	E_trigger_n trig_n 0 value={IF( v(s)==v_s2 & v(np)<=p_th_2_1, 1e-7, 0)}
+	* soft switching
+	Ess ss 0 value={idt( IF( V(Plus, Minus)>0 & v(ss)<=p_th_1_2, chargeScaling*I(Gcond), IF( v(Plus, Minus)<0 & v(ss)>=p_th_2_1, chargeScaling*I(Gcond), 0 ) ), p_th_2_1) }
+
+
+	**********************
+	** state computation
+	**********************
+	Estate s 0 value={ get_state(V(Plus, Minus), V(pp), V(np), p_th_1_2, p_th_2_1, v_s1, v_s2) }
+	Rstate s 0 r=100k
+
+	Eb b 0 value={ (v(ss) + abs(p_th_2_1))/(p_th_1_2 + abs(p_th_2_1)) }
+
+	************************
+	** Conduction processes
+	************************
+	Eon   on 0 value={V(Plus, Minus)}
+	Ron   on 0 r=ron
+	Eoff  off 0 value={V(Plus, Minus)}
+	Roff  off 0 r=roff
+
+* Hard switching
+** Gcond Plus Minus value={ IF( V(s)==v_s1, i(Roff), i(Ron) ) }
+* soft switching
+Gcond Plus Minus value={ (1-v(b))*i(Roff) + v(b)*i(Ron) }
+
+	************************
+	**  event counters
+	************************
+	E_p_events p_events 0 value={floor( V(tpp)/p_th_1_2 )}
+	E_n_events n_events 0 value={floor( V(tnp)/p_th_2_1 )}
+
+	*******************
+	** state function
+	*******************
+	.func get_state(v, pp, pn, th_1_2, th_2_1, v_s1, v_s2) {
+	+	IF(v>=0,
+	+		IF(pp>=th_1_2, v_s2,
+	+		v_s1),
+
+	+		IF(pn>=th_2_1, v_s2,
+	+		v_s1) ) 	}
+.ENDS memristor

@@ -1,17 +1,21 @@
 # VLSI Memristor/RRAM SPICE Compact Model
 ## README
 
-version v1.0.0, 10/05/2016
+version v1.0.0, 17/05/2016
 
-Author: Fernando García Redondo, Technical University of Madrid UPM
+## Author contact:
+* [Fernando García Redondo](http://www.fernandeando.com)
+* [fgarcia@die.upm.es](mailto:fgarcia@die.upm.es)
+* [Technical University of Madrid UPM](lsi.die.upm.es/)
 
+## License:
 Copyright of the model is maintained by the developers,
 and the model is distributed under a Dual-Licence mode.
 
 * **GPL License** apply for academic purposes.
 If you use this model in your work, you are requested to cite [1] in the reference.
 GitHub Repository and Downloads
-* **Commertial license** for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+* **Commercial license** for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
 
 ## Short Description
 Physical memristor/RRAM/resistive switching device SPICE compact model,
@@ -35,6 +39,15 @@ Resistive State (HRS) prior any electroforming-.
 Both LT-Spice and Cadence Spectre compact models/test benches
 are provided.
 
+### Compact model examples:
+* Bipolar examples in **X/bipolar_aSiCCuTiN** and **spice/charge_controlled** folders.
+* Unipolar examples in **X/unipolar_NiHfO2Si** folder.
+* Variability (RTN and cycle/voltage dependent) examples in **spectre/bipolar_aSiCCuTiN** folder
+* RRAM Multi-level examples in **spectre/bipolar_aSiCCuTiN** and **spice/bipolar_aSiCCuTiN** folders
+* Pristine (Pre-forming) state examples in **spectre/bipolar_aSiCCuTiN** folder
+* Temperature-dependency examples in **spectre/bipolar_aSiCCuTiN** folder
+* Standard (phenomenological) charge controlled examples in **spice/charge_controlled** folder
+
 ## Full Description
 See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds**,
 *Fernando García-Redondo, Robert P. Gowers, A. Crespo-Yepes,Marisa López-Vallejo and Liudi Jiang*,
@@ -42,12 +55,9 @@ See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by
 2016, DOI: 10.1109/TCSI.2016.2564703
 
 ## Proyect pages:
+* https://github.com/fgr1986/vlsi_memristor_compact_model
 * http://vlsi.die.upm.es/memristor_spice_model
 * http://vlsi.die.upm.es/memristor
-
-## Author contact:
-* [Fernando García Redondo](http://www.fernandeando.com)
-* [fgarcia@die.upm.es](mailto:fgarcia@die.upm.es)
 
 ## Memristor Publications:
 ### Compact Model Publications

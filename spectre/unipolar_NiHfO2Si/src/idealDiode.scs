@@ -1,0 +1,53 @@
+////////////////////////////////////////////////
+// diode adhoc model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+simulator lang=spectre
+
+
+// declare a subcircuit, which instantiates a diode
+// with a parameterized model.
+// those parameters are is, rs and n.
+
+subckt idealDiode ( p n )
+  // parameters and default values
+  parameters m_is=1.8e-5 m_n=1.22
+  // instantiation
+  G_d ( p n ) bsource i=m_is*( exp( v(p, n)/m_n ) -1)
+ends
+
+subckt idealPNDiode ( p n )
+  // parameters and default values
+  parameters m_is=1.8e-5 m_rs=1.43 m_n=1.22
+  // model definition
+  model myIdealDiode diode is=m_is rs=m_rs n=m_n
+  // instantiation
+  instDiode ( p n ) myIdealDiode
+ends
