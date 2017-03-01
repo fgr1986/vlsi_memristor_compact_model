@@ -1,7 +1,7 @@
 # VLSI Memristor/RRAM SPICE Compact Model
 ## README
 
-version v1.1.0, 17/05/2016
+version v1.2.0, 01/03/2017
 
 ## Author contact:
 * [Fernando García Redondo](http://www.fernandeando.com)
@@ -16,6 +16,9 @@ and the model is distributed under a Dual-Licence mode.
 If you use this model in your work, you are requested to cite [1] in the reference.
 GitHub Repository and Downloads
 * **Commercial license** for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+
+## Short Changelog:
+v1.2.0: CF degradation model added through src/memristor_degradation.scs
 
 ## Short Description
 Physical memristor/RRAM/resistive switching device SPICE compact model,

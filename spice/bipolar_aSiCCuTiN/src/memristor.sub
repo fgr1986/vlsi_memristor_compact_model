@@ -63,7 +63,12 @@
 
 	Gcond Plus Minus value={ max( -cI, min(cI, IF(V(s)==voff, IF( V(Plus, Minus)>0, I(Goffp), I(Goffn) ), IF( V(Plus, Minus)>0, I(Ronp), I(Ronn) ) ) ) ) }
 
-	Ecycle  cycle  0 value={floor( V(nsumpow)/pthreset )}
-	EsEvent sEvent 0 value={floor( V(nsumpow)/pthreset ) + floor( V(psumpow)/pthset ) }
+	************************
+	**  event counters
+	************************
+	* E_p_events p_events 0 value={floor( V(tpp)/p_th_3_4 )}
+	* E_n_events n_events 0 value={floor( V(tnp)/p_th_2_1 )}
+	Ecycle  cycle  0 value={floor( V(pp)/pthreset )}
+	EsEvent sEvent 0 value={floor( V(pp)/pthreset ) + floor( V(np)/pthset ) }
 
 .ENDS memristor
