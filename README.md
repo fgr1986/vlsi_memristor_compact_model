@@ -1,7 +1,7 @@
 # VLSI Memristor/RRAM SPICE Compact Model
 ## README
 
-version v1.2.0, 01/03/2017
+version v1.2.1, 21/04/2017
 
 ## Author contact:
 * [Fernando García Redondo](http://www.fernandeando.com)
@@ -18,6 +18,7 @@ GitHub Repository and Downloads
 * **Commercial license** for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
 
 ## Short Changelog:
+v1.2.1: Experiments on advanced modeling of variability and degradation
 v1.2.0: CF degradation model added through src/memristor_degradation.scs
 
 ## Short Description
@@ -43,6 +44,7 @@ Both LT-Spice and Cadence Spectre compact models/test benches
 are provided.
 
 ### Compact model examples:
+* Advanced variability and degradation modeling examples in **spectre/bipolar_aSiCCuTiN/experiment_advanced_variability_degradation** folder.
 * Bipolar examples in **X/bipolar_aSiCCuTiN** and **spice/charge_controlled** folders.
 * Unipolar examples in **X/unipolar_NiHfO2Si** folder.
 * Variability (RTN and cycle/voltage dependent) examples in **spectre/bipolar_aSiCCuTiN** folder
@@ -59,6 +61,12 @@ See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by
 **IEEE Transactions on Circuits and Systems--I: Regular Papers**,
 2016, DOI: 10.1109/TCSI.2016.2564703
 
+See **Advanced Integration of Variability and Degradation in RRAM SPICE Compact Models**
+*Fernando García-Redondo, Marisa López-Vallejo and Carlos López Barrio*
+Department of Electronic Engineering, Technical University of Madrid, UPM
+{ fgarcia, marisa, barrio } @die.upm.es
+IEEE **14th International Conference on Synthesis, Modeling, Analysis and Simulation Methods and Applications to Circuit Design (SMACD 2017)** 2017.
+
 ## Proyect pages:
 * https://github.com/fgr1986/vlsi_memristor_compact_model
 * http://vlsi.die.upm.es/memristor_spice_model
@@ -71,24 +79,28 @@ See **SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by
   **IEEE Transactions on Circuits and Systems--I: Regular Papers**
   > 2016, DOI: 10.1109/TCSI.2016.2564703
 
+* **[2] Advanced Integration of Variability and Degradation in RRAM SPICE Compact Models**
+  *Fernando García-Redondo, Marisa López-Vallejo and Carlos López Barrio*
+  IEEE **14th International Conference on Synthesis, Modeling, Analysis and Simulation Methods and Applications to Circuit Design (SMACD 2017)** 2017.
+
 ### Memristor Application Framework Publications
-* **[2] Building Memristor Applications: From Device Model to Circuit Design**
+* **[3] Building Memristor Applications: From Device Model to Circuit Design**
   *Fernando García-Redondo; Marisa López-Vallejo; Pablo Ituero*
   **IEEE Transactions on Nanotechnology**
   > 2014, DOI: 10.1109/TNANO.2014.2345093
 
-* **[3] A CAD Framework for the Characterization and Use of Memristor Models**
+* **[4] A CAD Framework for the Characterization and Use of Memristor Models**
   *Fernando García-Redondo, Marisa López-Vallejo, Pablo Ituero, Carlos López Barrio*
   **Synthesis, Modeling, Analysis and Simulation Methods and Applications to Circuit Design (SMACD), 2012 International Conference on**
   > 2012, DOI: 10.1109/SMACD.2012.6339408
 
-* **[4] Model Validation and Simulation Framework for Novel Nanometer Devices**
+* **[5] Model Validation and Simulation Framework for Novel Nanometer Devices**
   *Fernando García-Redondo, Marisa López-Vallejo, Pablo Ituero, Carlos López Barrio*
   **Conference on Design of Circuits and Integrated Systems 2012 (DCIS 2012), At Avignon (France)**
   > 2012, DOI: 10.13140/2.1.1323.8721
 
 ### Memristor In Circuit Simulators, Mathematical Description Publications
-* **[5] The tractability index of memristive circuits: branch-oriented and tree-based models.**
+* **[6] The tractability index of memristive circuits: branch-oriented and tree-based models.**
   *Fernando García-Redondo, Ricardo Riaza*
   **Mathematical Methods in the Applied Sciences.**
   > 2012 DOI: 10.1002/mma.2544
