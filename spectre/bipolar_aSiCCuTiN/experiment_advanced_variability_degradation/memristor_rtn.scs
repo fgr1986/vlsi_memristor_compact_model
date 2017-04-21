@@ -1,0 +1,134 @@
+////////////////////////////////////////////////
+// VLSI bipolar_aSiCCuTiN  RRAM with RTN variability model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// v1.1, 17/05/2016
+////////////////////////////////////////////////
+// Author: Fernando García-Redondo
+// fgarcia@die.upm.es, fernandeando.com
+// Technical University of Madrid
+//
+// https://github.com/fgr1986/vlsi_memristor_compact_model
+// http://vlsi.die.upm.es/memristor_spice_model
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// License:
+// Copyright of the model is maintained by the developers,
+// and the model is distributed under a Dual-Licence mode.
+// 1) GPL License apply for academic purposes.
+// If you use this model in your work, you are requested to cite [1] in the reference.
+// GitHub Repository and Downloads
+// 2) Commercial license for other purposes not meeting GPL license: Contact *fgarcia@die.upm.es*
+// Full License: LICENSE.txt
+//
+// [1] SPICE Compact Modeling of Bipolar/Unipolar Memristor Switching Governed by Electrical Thresholds
+// Fernando García-Redondo et. al.
+// IEEE Transactions on Circuits and Systems--I: Regular Papers
+// 2016, DOI: 10.1109/TCSI.2016.2564703
+////////////////////////////////////////////////
+
+////////////////////////////////////////////////
+// How To and configuration
+// 1) RTN variability memristor
+// 2) No Pristine state
+// 3) Asymetric conductance
+// 4) Hard Switching
+////////////////////////////////////////////////
+
+simulator lang=spectre
+
+// aux variability functions
+include "variability.scs"
+
+///////////////////////
+// RRAM subcircuit
+///////////////////////
+subckt memristor (Plus Minus)
+
+	///////////////////////
+  // parameters
+	///////////////////////
+  parameters
+    // constants
+    // [a.u.]       [J/K]       [C]	         [F/m]
+    + pi=3.1415926  Kb=1.38e-23 q=1.6e-19  eps_0=8.85e-12;
+    // conductance parameters
+    // [m^2]      [m]    [1/V]    [1/V]   [A/(m^2 K^2)] [A/(m^2 K^2)] [eV]
+    + area=6.4e-9 d=4e-8 scl_p=5  scl_n=7 AA_p=2.4e6    AA_n=1e6      Ub=0.9
+    // [a.u.] [ohm]   [K]
+    + eps_r=8 Ron=300 T0=300 k_temp=1
+    // [A]  [ohms]      [ohms]
+    + cI=1e-4 r_on_p=6.1k r_on_n=8.5k
+    // [F/m]
+    + eps_i=eps_r*eps_0
+
+    // energy threshold parameters
+    + p_th_set=3e-12 p_th_reset=-0.8e-8
+    // windowing: soft switching
+    // + p=4
+    // voltage dependent variabiligy: windowing
+		+ p_rand_i=4
+    // internal params
+    + v_off=0e-7 v_on=1e-7
+
+	///////////////////////
+  // energy computation
+	///////////////////////
+	ic p_sum_pow=0
+  E_pos_power ( p_sum_pow 0 ) bsource v= idt( v(Plus, Minus)>0 && v(p_sum_pow)<v(set_th) ? v(Plus, Minus)*abs(i(G_cond)) : 0, 0 )
+	ic n_sum_pow=0
+	E_neg_power ( n_sum_pow 0 ) bsource v= idt( v(Plus, Minus)<0 && v(n_sum_pow)>v(reset_th) ? v(Plus, Minus)*abs(i(G_cond)) : 0, 0 )
+
+	////////////////////////////
+	// thresholds computation
+	////////////////////////////
+	ic set_th=p_th_set
+	ic reset_th=p_th_reset
+	E_set_th   ( set_th   0 ) bsource v= ( floor( v(n_sum_pow)/p_th_reset ) + 1 )*p_th_set
+	E_reset_th ( reset_th 0 ) bsource v= floor( v(p_sum_pow)/p_th_set )*( p_th_reset )
+
+  ////////////////////////////
+  // state computation
+  // E_state=0 -> off state; E_state=1 -> on  state
+	////////////////////////////
+  ic state=v_off
+  E_state ( state 0 ) bsource  v=  v(state)==v_off ? (v(p_sum_pow)>v(set_th) ? v_on : v_off ) : ( v(n_sum_pow)<v(reset_th) ? v_off : v_on )
+
+	////////////////////////////
+	// conduction computation
+	////////////////////////////
+	// on modeling without complain current
+  E_on ( on 0 ) bsource v=v(Plus, Minus)
+  Ron_p  ( on 0 ) bsource r=r_on_p+v(rand_ron)
+  Ron_n  ( on 0 ) bsource r=r_on_n+v(rand_ron)
+
+  // off modeling, Asimetric conduction
+  G_off_p ( 0 off_p ) bsource i=  (1+v(rand_ioff))*area*AA_p*k_temp*(T0**2)*exp(-q * Ub / (Kb * T0) ) * exp( sqrt(abs(v(Plus, Minus)) ) * (scl_p + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * eps_i)))) )
+  G_off_n ( 0 off_n ) bsource i= -(1+v(rand_ioff))*area*AA_n*k_temp*(T0**2)*exp(-q * Ub / (Kb * T0) ) * exp( sqrt(abs(v(Plus, Minus)) ) * (scl_n + q / (Kb * T0) * ( sqrt(q / (d * 4 * pi * eps_i)))) )
+
+	// hard switch Asimetric conduction no pristine
+  G_cond ( Plus Minus ) bsource i=max( -cI, min(cI, v(state)==v_off ? ( v(Plus, Minus)>0 ? i(G_off_p) : i(G_off_n) ) : ( v(Plus, Minus)>0 ? i(Ron_p) : i(Ron_n) ) ))
+
+	////////////////////////////
+	// cycles computation
+	////////////////////////////
+  E_cycle  ( cycle  0 ) bsource v=floor( v(n_sum_pow)/p_th_reset )
+  E_sEvent ( sEvent 0 ) bsource v=floor( v(n_sum_pow)/p_th_reset ) + floor( v(p_sum_pow)/p_th_set )
+
+  ///////////////////////////
+  // Gaussian Random source
+  // mean: 0
+  // std: 980.7 mV
+  // max voltage: 0.75
+  //////////////////////////
+  E_rand ( rand 0 ) vsource dc=0 isnoisy=true noisefile="noise.txt"
+
+  // Random telegraph noise: event count dependent, voltage dependent
+  E_rand_i_off (rand_ioff 0 ) bsource v=0.4*(amplV1-abs(v(Plus, Minus)))**p_rand_i*v(rand)
+	// Cycle dependent ron variability: cycle dependent values, taken from measures.
+	// Random telegraph noise: event count dependent, voltage dependent
+  E_rand_i_on (rand_ron 0 ) bsource v=1e-2*(amplV1-abs(v(Plus, Minus)))**p_rand_i*v(rand)
+
+ends memristor
