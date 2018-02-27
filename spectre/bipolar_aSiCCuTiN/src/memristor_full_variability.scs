@@ -123,7 +123,7 @@ subckt memristor (Plus Minus)
   // std: 980.7 mV
   // max voltage: 0.75
   //////////////////////////
-  E_rand ( rand 0 ) vsource dc=0 isnoisy=true noisefile="noise.txt"
+  E_rand ( rand 0 ) vsource dc=0 isnoisy=yes noisefile="noise.txt"
 
   // Random telegraph noise: event count dependent, voltage dependent
   E_rand_i_off (rand_ioff 0 ) bsource v=0.6*(amplV1-abs(v(Plus, Minus)))**p_rand_i*v(rand)
