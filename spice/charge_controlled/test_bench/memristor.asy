@@ -7,7 +7,7 @@ LINE Normal -9 -44 -16 -44
 LINE Normal -9 -38 -9 -44
 LINE Normal -23 -38 -9 -38
 LINE Normal -23 -31 -23 -38
-LINE Normal -9 -31 -23 -31
+LINE Normal -9 -31 -23 -3
 LINE Normal -9 -25 -9 -31
 LINE Normal -23 -25 -9 -25
 LINE Normal -23 -20 -23 -25
